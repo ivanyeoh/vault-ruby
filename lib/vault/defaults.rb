@@ -134,10 +134,22 @@ module Vault
         end
       end
 
+      def ssl_key_pem_contents
+        if ENV["VAULT_SSL_KEY_PEM_CONTENTS_BASE64"]
+          Base64.decode64(ENV["VAULT_SSL_KEY_PEM_CONTENTS_BASE64"])
+        else
+          ENV["VAULT_SSL_KEY_PEM_CONTENTS"]
+        end
+      end
+
       # The path to a pem on disk to use with custom SSL verification
       # @return [String, nil]
       def ssl_pem_file
         ENV["VAULT_SSL_CERT"] || ENV["VAULT_SSL_PEM_FILE"]
+      end
+
+      def ssl_key_pem_file
+        ENV["VAULT_SSL_KEY"] || ENV["VAULT_SSL_KEY_PEM_FILE"]
       end
 
       # Passphrase to the pem file on disk to use with custom SSL verification

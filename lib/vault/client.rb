@@ -118,9 +118,15 @@ module Vault
 
         # Custom pem files, no problem!
         pem = ssl_pem_contents || (ssl_pem_file ? File.read(ssl_pem_file) : nil)
+        key_pem = ssl_key_pem_contents || (ssl_key_pem_file ? File.read(ssl_key_pem_file) : nil) 
+
         if pem
           @nhp.cert = OpenSSL::X509::Certificate.new(pem)
-          @nhp.key = OpenSSL::PKey::RSA.new(pem, ssl_pem_passphrase)
+          @nhp.key = if key_pem
+            OpenSSL::PKey.read(key_pem, ssl_pem_passphrase)
+          else
+            OpenSSL::PKey::RSA.new(pem, ssl_pem_passphrase)
+          end
         end
 
         # Use custom CA cert for verification
